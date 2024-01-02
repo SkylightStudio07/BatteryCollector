@@ -19,6 +19,13 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	/*the pickup to Spawn*/
+	// APickup이나 자손클래스만으로 한정하여 사용 가능
+	// pickup 블루프린트에서 whaytospawn 변수 설정 가능
+	UPROPERTY(EditAnywhere, Category = "Spawning")
+	TSubclassOf<class APickup> WhatToSpawn;
+
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -32,9 +39,12 @@ public:
 
 
 
+
 private:
 	// 아이템 스폰 위치를 지정할 박스 컴포넌트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* WhereToSpawn;
 
+	// 새 아이템 생성을 다룸
+	void SpawnPickup();
 };
