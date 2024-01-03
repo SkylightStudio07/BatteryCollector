@@ -25,6 +25,22 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Spawning")
 	TSubclassOf<class APickup> WhatToSpawn;
 
+	// 어떤 값이 아니기에 UPROPORTY 매크로 필요없음
+	FTimerHandle SpawnTimer;
+
+	// 생성시 최소 지연 시간
+	// 블루프린트를 만들면 이 값을 동적으로 변경 가능
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning")
+	float SpawnDelayRangeLow;
+
+	//최대 지연 시간
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning")
+	float SpawnDelayRangeHigh;
+
+
+
+
+
 
 public:	
 	// Called every frame
@@ -47,4 +63,8 @@ private:
 
 	// 새 아이템 생성을 다룸
 	void SpawnPickup();
+
+	// 코드에서만 값을 변경할 것이기에 private
+	// 현재 아이템 생성 딜레이값
+	float SpawnDelay;
 };

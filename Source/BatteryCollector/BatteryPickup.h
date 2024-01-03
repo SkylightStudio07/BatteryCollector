@@ -16,4 +16,7 @@ class BATTERYCOLLECTOR_API ABatteryPickup : public APickup
 public:
 	// Sets default values for this actor's properties
 	ABatteryPickup();
+
+	// 블루프린트 네이티브 이벤트니 임플멘테이션 이용
+	void WasCollected_Implementation() override;
 };

@@ -45,6 +45,14 @@ public:
 	// 자주 변경하지 않을 것으로 예상되는 코스트가 많이 들어가는 결과값에는 Bluepirnt보다는 BlueprintCallable이 더 적합 
 	// 따라서 자주 변경되는 값에는 pure, 자주 변경되지 않는 값에는 Callable.
 
+	// 블루프린트 네이티브 이벤트는 이벤트 발생 시 코드에서 설정한 부분을 실행
+	// 블루프린트에서는 설정될 수 없는 부분
+	// 아이템을 먹었을 때 호출할 함수
+	UFUNCTION(BlueprintNativeEvent)
+	void WasCollected();
+	virtual void WasCollected_Implementation(); // 자손 코드에서 오버라이딩 가능
+
+
 private:
 	// pickup 클래스에서만 사용 및 참조 가능
 	/** Static mesh to represent the pickup in the level **/

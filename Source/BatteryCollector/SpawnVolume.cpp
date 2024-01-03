@@ -19,13 +19,20 @@ ASpawnVolume::ASpawnVolume()
 	WhereToSpawn = CreateDefaultSubobject<UBoxComponent>(TEXT("WhereToSpawn"));
 	RootComponent = WhereToSpawn;
 
+	// 아이템 생성 최소/최대값 설정
+	SpawnDelayRangeLow = 1.0f;
+	SpawnDelayRangeHigh = 4.5f;
+
 }
 
 // Called when the game starts or when spawned
 void ASpawnVolume::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	SpawnDelay = FMath::FRandRange(SpawnDelayRangeLow, SpawnDelayRangeHigh);
+	// 게임 속 모든 타이머를 추적
+	GetWorldTimerManager().SetTimer(SpawnTimer, this, &ASpawnVolume::SpawnPickup, SpawnDelay, false);
 }
 
 // Called every frame
@@ -67,6 +74,12 @@ void ASpawnVolume::SpawnPickup() {
 
 			// 아이템 스폰
 			APickup* const SpawnedPickup = World->SpawnActor<APickup>(WhatToSpawn, SpawnLocation, SpawnRotation, SpawnParams);
+
+
+			// 하나의 아이템을 생성하고 범위 내 값으로 타이머 시간을 랜덤하게 새로 뽑음.
+			SpawnDelay = FMath::FRandRange(SpawnDelayRangeLow, SpawnDelayRangeHigh);
+			// 게임 속 모든 타이머를 추적
+			GetWorldTimerManager().SetTimer(SpawnTimer, this, &ASpawnVolume::SpawnPickup, SpawnDelay, false);
 		}
 	}
 }
