@@ -67,6 +67,17 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	// End of APawn interface
 
+	// 버튼을 누르면 스피어 속에 들어가있는 아이템을 습득
+	UFUNCTION(BlueprintCallable, Category = "Pickups")
+		void CollectPickups();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Power")
+	float InitialPower;
+private :
+	// 현재 파워값
+	UPROPERTY(VisibleAnywhere, Category = "Power")
+		float CharacterPower;
+
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -74,5 +85,14 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	// 컴포넌트 반환
 	FORCEINLINE class USphereComponent* GetCollectionSphere() const { return CollectionSphere; }
+	// 초기 파워값 GET
+	UFUNCTION(BlueprintPure, Category = "Power")
+	float GetInitialPower();
+	// 현재 파워값
+	UFUNCTION(BlueprintPure, Category = "Power")
+	float GetCurrentPower();
+	// 캐릭터의 현재 파워값을 업데이트
+	UFUNCTION(BlueprintCallable, Category = "Power")
+	void UpdatePower(float PowerChange);
 };
 

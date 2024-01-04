@@ -9,6 +9,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Pickup.h"
 
 //////////////////////////////////////////////////////////////////////////
 // ABatteryCollectorCharacter
@@ -52,6 +53,9 @@ ABatteryCollectorCharacter::ABatteryCollectorCharacter()
 	CollectionSphere->AttachTo(RootComponent);
 	CollectionSphere->SetSphereRadius(200.0f);
 
+	// 파워 초기값 세팅
+	InitialPower = 2000.0f;
+	CharacterPower = InitialPower;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -63,6 +67,8 @@ void ABatteryCollectorCharacter::SetupPlayerInputComponent(class UInputComponent
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+
+	PlayerInputComponent->BindAction("Collect", IE_Pressed, this, &ABatteryCollectorCharacter::CollectPickups);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &ABatteryCollectorCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ABatteryCollectorCharacter::MoveRight);
@@ -144,4 +150,38 @@ void ABatteryCollectorCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 	}
+}
+
+void ABatteryCollectorCharacter::CollectPickups() {
+	// 스피어와 오버랩되는 모든 액터를 배열로 받아옴
+	TArray<AActor*> CollectedActors;
+	CollectionSphere->GetOverlappingActors(CollectedActors);
+	//foreach 이용
+	for (int32 iCollected = 0; iCollected < CollectedActors.Num(); ++iCollected) {
+		// 액터를 APickup으로 형변환
+		// 클래스, 배열, 순번
+		APickup* const TestPickup = Cast<APickup>(CollectedActors[iCollected]);
+
+		// 오버랩되는 모든 액터중 연관 있는 아이템들만.
+		// 형변환이 성공하고 아이템이 유호하고 활성화되어있으면 isactive로 확인 가능
+		if (TestPickup && !TestPickup->IsPendingKill() && TestPickup->isActive()) {
+			// wascollected 호출
+			TestPickup->WasCollected();
+			// pickup 비활성화
+			TestPickup->SetActive(false);
+		}
+	}
+	
+}
+
+float ABatteryCollectorCharacter::GetInitialPower() {
+	return InitialPower;
+}
+
+float ABatteryCollectorCharacter::GetCurrentPower() {
+	return CharacterPower;
+}
+
+void ABatteryCollectorCharacter::UpdatePower(float PowerChange) {
+	CharacterPower += PowerChange;
 }

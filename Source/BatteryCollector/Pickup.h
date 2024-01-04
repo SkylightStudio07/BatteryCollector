@@ -32,9 +32,9 @@ public:
 	// 사용 가능할 때에는 true, 불가능일 때에는 false
 	bool bIsActive;
 
-	UFUNCTION(BlueprintPure, Category = "Pickup")
 	//BlueprintPure은 값 변경 가능, 일반적으로는 하면 안됨
 	//반환값을 달라고 할 때마다 실행이 되는 만큼, 스택에서 무언가를 꺼내서 반환하는 스크립트가 들어있으면 두번 반환하게 됨. 이러면 값이 순서에 따라 달라질 수 있음.
+	UFUNCTION(BlueprintPure, Category = "Pickup")
 	bool isActive();
 
 	/* Allows other classes to safely change whether or not pickup is active*/
