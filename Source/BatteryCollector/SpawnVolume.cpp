@@ -30,9 +30,9 @@ void ASpawnVolume::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SpawnDelay = FMath::FRandRange(SpawnDelayRangeLow, SpawnDelayRangeHigh);
+	// SpawnDelay = FMath::FRandRange(SpawnDelayRangeLow, SpawnDelayRangeHigh);
 	// 게임 속 모든 타이머를 추적
-	GetWorldTimerManager().SetTimer(SpawnTimer, this, &ASpawnVolume::SpawnPickup, SpawnDelay, false);
+	// GetWorldTimerManager().SetTimer(SpawnTimer, this, &ASpawnVolume::SpawnPickup, SpawnDelay, false);
 }
 
 // Called every frame
@@ -48,6 +48,19 @@ FVector ASpawnVolume::GetRandomPointInVolume()
 	FVector SpawnExtent = WhereToSpawn->Bounds.BoxExtent;
 
 	return UKismetMathLibrary::RandomPointInBoundingBox(SpawnOrigin, SpawnExtent);
+}
+
+void ASpawnVolume::SetSpawningActive(bool bShouldSpawn) {
+	if (bShouldSpawn) {
+		// spawnpickup 타이머 설정
+		SpawnDelay = FMath::FRandRange(SpawnDelayRangeLow, SpawnDelayRangeHigh);
+		// 게임 속 모든 타이머를 추적
+		GetWorldTimerManager().SetTimer(SpawnTimer, this, &ASpawnVolume::SpawnPickup, SpawnDelay, false);
+	}
+	else {
+		// 타이머 초기화
+		GetWorldTimerManager().ClearTimer(SpawnTimer);
+	}
 }
 
 void ASpawnVolume::SpawnPickup() {

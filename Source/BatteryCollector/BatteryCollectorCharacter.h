@@ -69,14 +69,26 @@ protected:
 
 	// 버튼을 누르면 스피어 속에 들어가있는 아이템을 습득
 	UFUNCTION(BlueprintCallable, Category = "Pickups")
-		void CollectPickups();
+	void CollectPickups();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Power")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Power", Meta = (BlueprintProtected = "true"))
 	float InitialPower;
+
+	// 캐릭터의 속도에 곱해지는 값
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Power", Meta = (BlueprintProtected = "true"))
+	float SpeedFactor;
+
+	// 파워 레벨이 0일때 캐릭터 속도
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Power", Meta = (BlueprintProtected = "true"))
+	float BaseSpeed;
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Power")
+	void PowerChangeEffect();
+
 private :
 	// 현재 파워값
 	UPROPERTY(VisibleAnywhere, Category = "Power")
-		float CharacterPower;
+	float CharacterPower;
 
 public:
 	/** Returns CameraBoom subobject **/

@@ -9,6 +9,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "BatteryPickup.h"
 #include "Pickup.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -56,6 +57,12 @@ ABatteryCollectorCharacter::ABatteryCollectorCharacter()
 	// 파워 초기값 세팅
 	InitialPower = 2000.0f;
 	CharacterPower = InitialPower;
+
+	// 파워 레벨에 따라 속도를 설정
+
+	SpeedFactor = 0.75f;
+	BaseSpeed = 10.0f;
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -156,6 +163,8 @@ void ABatteryCollectorCharacter::CollectPickups() {
 	// 스피어와 오버랩되는 모든 액터를 배열로 받아옴
 	TArray<AActor*> CollectedActors;
 	CollectionSphere->GetOverlappingActors(CollectedActors);
+	float CollectedPower = 0;
+	
 	//foreach 이용
 	for (int32 iCollected = 0; iCollected < CollectedActors.Num(); ++iCollected) {
 		// 액터를 APickup으로 형변환
@@ -167,10 +176,19 @@ void ABatteryCollectorCharacter::CollectPickups() {
 		if (TestPickup && !TestPickup->IsPendingKill() && TestPickup->isActive()) {
 			// wascollected 호출
 			TestPickup->WasCollected();
+			// 아이템이 배터리인지 형변환으로 확인
+			ABatteryPickup* const TestBattery = Cast<ABatteryPickup>(TestPickup);
+			if (TestBattery) {
+				// 아이템속 파워값을 캐릭터에 더해주기
+				CollectedPower += TestBattery->GetPower();
+			}
 			// pickup 비활성화
 			TestPickup->SetActive(false);
 		}
 	}
+	// 변동값이 있는지 체크
+	if (CollectedPower > 0) { UpdatePower(CollectedPower); }
+	
 	
 }
 
@@ -182,6 +200,12 @@ float ABatteryCollectorCharacter::GetCurrentPower() {
 	return CharacterPower;
 }
 
+// 파워가 증가하거나 감소할 때
 void ABatteryCollectorCharacter::UpdatePower(float PowerChange) {
 	CharacterPower += PowerChange;
+	//Character Move Component 받아오기
+	// 파워에 따라 속도 변경
+	GetCharacterMovement()->MaxWalkSpeed = BaseSpeed + SpeedFactor * CharacterPower;
+	// 시각 효과 호출
+	PowerChangeEffect();
 }
